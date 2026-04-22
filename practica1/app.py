@@ -1,9 +1,23 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 
 app = Flask(__name__)
 
 @app.route('/')
 def inicio():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if email != usuario_valido["email"]:
+            flash("Correo no registrado")
+            return render_template('login.html')
+
+        if password != usuario_valido["password"]:
+            flash("Contraseña incorrecta")
+            return render_template('login.html')
+
+        return redirect('/pagprincipal')
+
     return render_template('login.html')
 
 
