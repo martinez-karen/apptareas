@@ -14,6 +14,12 @@ def registrar():
         apellidos= request.form.get('apellidos')
         email = request.form.get('email')
         password = request.form.get('password')
+        
+        if "@" not in email:
+            return "Correo invalido"
+        
+        if len(password) < 6:
+            return "¡Contraseña muy facil!"
         return redirect('/pagprincipal')
 
     return render_template('registrate.html')

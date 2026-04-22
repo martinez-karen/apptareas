@@ -9,7 +9,11 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <style>
         body {
-            background-color: darkslategray;
+            background-image: url("{{ url_for('static', filename = 'img/mifondo.jpg')}}") ;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
         }
     </style>
 </head>
@@ -24,19 +28,19 @@
 
 <body>
     <div class="text-center mt-4">
-        <h1 class="titulo-app"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+        <h1 class="titulo-app"><svg xmlns="http://www.w3.org/2000/svg" width="75" height="75" fill="currentColor"
                 class="bi bi-check2-all" viewBox="0 0 16 16">
                 <path
                     d="M12.354 4.354a.5.5 0 0 0-.708-.708L5 10.293 1.854 7.146a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0zm-4.208 7-.896-.897.707-.707.543.543 6.646-6.647a.5.5 0 0 1 .708.708l-7 7a.5.5 0 0 1-.708 0" />
                 <path d="m5.354 7.146.896.897-.707.707-.897-.896a.5.5 0 1 1 .708-.708" />
             </svg> TaskFlow</h1>
     </div>
-    <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
 
-        <div class="card p-4" style="width: 350px;">
+        <div class="card p-4" style="width: 600px;">
             <h3 class="text-center">Iniciar Sesión</h3>
 
-            <form action="/pagprincipal">
+            <form>
                 <div class="mb-3">
                     <label><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-envelope-at-fill" viewBox="0 0 16 16">
