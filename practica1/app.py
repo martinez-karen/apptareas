@@ -1,18 +1,26 @@
 from flask import Flask, render_template, request, redirect, flash
+from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017")
+db = client["planifyprime"]
+usuarios = db["misusuarios"]
 
 app = Flask(__name__)
+app.secret_key = "algo_secreto"
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def inicio():
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
 
-        if email != usuario_valido["email"]:
+        usuario = usuarios.find_one({"email": email})
+
+        if not usuario:
             flash("Correo no registrado")
             return render_template('login.html')
 
-        if password != usuario_valido["password"]:
+        if usuario["password"] != password:
             flash("Contraseña incorrecta")
             return render_template('login.html')
 
@@ -25,15 +33,21 @@ def inicio():
 def registrar():
     if request.method == 'POST':
         nombre = request.form.get('nombre')
-        apellidos= request.form.get('apellidos')
+        apellidos = request.form.get('apellidos')
         email = request.form.get('email')
         password = request.form.get('password')
-        
-        if "@" not in email:
-            return "Correo invalido"
-        
-        if len(password) < 6:
-            return "¡Contraseña muy facil!"
+
+        if usuarios.find_one({"email": email}):
+            flash("Ese correo ya está registrado")
+            return render_template('registrate.html')
+
+        usuarios.insert_one({
+            "nombre": nombre,
+            "apellidos": apellidos,
+            "email": email,
+            "password": password
+        })
+
         return redirect('/pagprincipal')
 
     return render_template('registrate.html')
