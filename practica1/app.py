@@ -40,6 +40,10 @@ def registrar():
         if usuarios.find_one({"email": email}):
             flash("Ese correo ya está registrado")
             return render_template('registrate.html')
+        
+        if "@" not in email or "." not in email:
+            flash("Correo inválido")
+            return render_template('registrate.html')
 
         usuarios.insert_one({
             "nombre": nombre,
