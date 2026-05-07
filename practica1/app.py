@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, flash
 from pymongo import MongoClient
 from datetime import datetime
+from bson import ObjectId
 
 
 client = MongoClient("mongodb://localhost:27017")
 db = client["planifyprime"]
 usuarios = db["misusuarios"]
+tareas_collection= db["tareas"]
 
 app = Flask(__name__)
 app.secret_key = "algo_secreto"
@@ -59,31 +61,42 @@ def registrar():
     return render_template('registrate.html')
 
 
-@app.route('/pagprincipal', methods=['GET', 'POST'])
+@app.route("/pagprincipal")
 def principal():
 
-    if request.method == 'POST':
-
-        titulo = request.form.get('titulo')
-        descripcion = request.form.get('descripcion')
-
-        nueva_tarea = {
-            "titulo": titulo,
-            "descripcion": descripcion,
-            "estado": "Pendiente",
-            "fecha": datetime.now().strftime("%Y-%m-%d %H:%M")
-        }
-
-        tareas.insert_one(nueva_tarea)
-
-        return redirect('/pagprincipal')
-
-    lista_tareas = list(tareas.find())
+    tareas = tareas_collection.find()
 
     return render_template(
-        'pagprincipal.html',
-        tareas=lista_tareas
+        "pagprincipal.html",
+        tareas=tareas
     )
+    
+
+@app.route("/agregar", methods=["POST"])
+def agregar():
+
+    texto = request.form.get("texto")
+
+    if not texto:
+        return redirect("/pagprincipal")
+
+    tareas_collection.insert_one({
+        "texto": texto,
+        "estado": "Pendiente",
+        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M")
+    })
+
+    return redirect("/pagprincipal")
+
+@app.route("/cambiar_estado/<id>/<estado>")
+def cambiar_estado(id, estado):
+
+    tareas_collection.update_one(
+        {"_id": ObjectId(id)},
+        {"$set": {"estado": estado}}
+    )
+
+    return redirect("/pagprincipal")
 
 @app.route('/recuperar', methods= ['GET', 'POST'])
 def recuperar():
