@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash
 from pymongo import MongoClient
+from datetime import datetime
+
 
 client = MongoClient("mongodb://localhost:27017")
 db = client["planifyprime"]
@@ -56,9 +58,32 @@ def registrar():
 
     return render_template('registrate.html')
 
-@app.route('/pagprincipal')
+
+@app.route('/pagprincipal', methods=['GET', 'POST'])
 def principal():
-    return render_template('pagprincipal.html')
+
+    if request.method == 'POST':
+
+        titulo = request.form.get('titulo')
+        descripcion = request.form.get('descripcion')
+
+        nueva_tarea = {
+            "titulo": titulo,
+            "descripcion": descripcion,
+            "estado": "Pendiente",
+            "fecha": datetime.now().strftime("%Y-%m-%d %H:%M")
+        }
+
+        tareas.insert_one(nueva_tarea)
+
+        return redirect('/pagprincipal')
+
+    lista_tareas = list(tareas.find())
+
+    return render_template(
+        'pagprincipal.html',
+        tareas=lista_tareas
+    )
 
 @app.route('/recuperar', methods= ['GET', 'POST'])
 def recuperar():
